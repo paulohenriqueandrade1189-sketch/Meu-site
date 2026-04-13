@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Plataforma Premium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        body { background: #0b1624; color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .game-card { background: #1a2c3d; border-radius: 12px; overflow: hidden; border: 1px solid #2d445d; }
+        .btn-main { background: linear-gradient(180deg, #00ff5f 0%, #009939 100%); color: #050a10; font-weight: 800; }
+        .bottom-nav { background: #152435; border-top: 1px solid #2d445d; position: fixed; bottom: 0; width: 100%; z-index: 100; height: 70px; display: flex; }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #64748b; font-size: 10px; font-weight: bold; }
+        .nav-item.active { color: #00ff5f; }
+        
+        #game-modal { display: none; position: fixed; inset: 0; background: rgba(5, 10, 16, 0.98); z-index: 150; align-items: center; justify-content: center; padding: 20px; }
+        input, select { background: #0b1624; border: 1px solid #2d445d; color: white; outline: none; }
+        input:focus { border-color: #00ff5f; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Header -->
+    <header class="p-4 flex justify-between items-center bg-[#152435] sticky top-0 z-50 border-b border-white/5">
+        <div class="font-black text-xl italic tracking-tighter text-white">BET<span class="text-green-500">VIRAL</span></div>
+        <div class="bg-[#0b1624] px-4 py-1 rounded-full border border-green-500/50">
+            <span class="text-[9px] block text-gray-400 uppercase leading-none text-right">Saldo</span>
+            <span class="text-green-500 font-bold text-sm" id="balance-header">R$ 7,00</span>
+        </div>
+    </header>
+
+    <main class="flex-1 pb-24 p-4">
+        
+        <!-- SEÇÃO: JOGOS -->
+        <div id="section-home" class="animate__animated animate__fadeIn">
+            <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                <span class="w-1 h-5 bg-green-500 rounded-full"></span>
+                Jogos Populares
+            </h3>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="game-card p-2" onclick="openGame('MINES VIRAL', 'https://img.freepik.com/vetores-premium/mina-terrestre-explosiva-dos-desenhos-animados-com-o-rastilho-aceso_494106-613.jpg')">
+                    <img src="https://img.freepik.com/vetores-premium/mina-terrestre-explosiva-dos-desenhos-animados-com-o-rastilho-aceso_494106-613.jpg" class="rounded-lg mb-2 h-24 w-full object-cover">
+                    <div class="text-[11px] font-bold text-center uppercase">Mines Viral</div>
+                </div>
+                <div class="game-card p-2" onclick="openGame('AVIATOR FREE', 'https://static.vecteezy.com/system/resources/previews/016/587/005/non_2x/red-plane-flying-on-white-background-free-vector.jpg')">
+                    <img src="https://static.vecteezy.com/system/resources/previews/016/587/005/non_2x/red-plane-flying-on-white-background-free-vector.jpg" class="rounded-lg mb-2 h-24 w-full object-cover">
+                    <div class="text-[11px] font-bold text-center uppercase">Aviator Free</div>
+                </div>
+                <div class="game-card p-2" onclick="openGame('FORTUNE TIGER', 'https://img.freepik.com/vetores-gratis/ilustracao-de-cabeca-de-tigre-irritado_23-2148415510.jpg')">
+                    <img src="https://img.freepik.com/vetores-gratis/ilustracao-de-cabeca-de-tigre-irritado_23-2148415510.jpg" class="rounded-lg mb-2 h-24 w-full object-cover">
+                    <div class="text-[11px] font-bold text-center uppercase">Fortune Tiger</div>
+                </div>
+                <div class="game-card p-2" onclick="openGame('DOUBLE PIX', '')">
+                    <div class="h-24 bg-red-600 rounded-lg flex items-center justify-center mb-2 font-black text-2xl text-white">2X</div>
+                    <div class="text-[11px] font-bold text-center uppercase text-white">Double Pix</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEÇÃO: SAQUE -->
+        <div id="section-withdraw" class="hidden animate__animated animate__fadeIn">
+            <h3 class="text-xl font-black mb-6 text-center">ÁREA DE SAQUE</h3>
+            
+            <div class="bg-[#1a2c3d] rounded-3xl p-6 border border-white/5 shadow-2xl">
+                <div class="text-center mb-8 bg-[#0b1624] py-4 rounded-2xl border border-white/5">
+                    <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Seu Saldo Disponível</p>
+                    <div class="text-4xl font-black text-green-500" id="withdraw-balance-display">R$ 7,00</div>
+                </div>
+
+                <!-- Formulário de Saque (O que aparece primeiro) -->
+                <div id="withdraw-form">
+                    <div class="space-y-4 mb-6">
+                        <div>
+                            <label class="text-[10px] uppercase text-gray-500 font-bold ml-1 mb-1 block">Tipo de Chave PIX</label>
+                            <select class="w-full p-4 rounded-xl text-sm">
+                                <option>CPF</option>
+                                <option>E-mail</option>
+                                <option>Celular</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] uppercase text-gray-500 font-bold ml-1 mb-1 block">Sua Chave PIX</label>
+                            <input type="text" placeholder="Digite sua chave aqui" class="w-full p-4 rounded-xl text-sm">
+                        </div>
+                    </div>
+                    <button onclick="attemptWithdraw()" class="w-full btn-main py-4 rounded-2xl text-sm uppercase tracking-widest">
+                        SOLICITAR SAQUE
+                    </button>
+                    <p class="text-[10px] text-gray-500 mt-4 text-center">Processamento via PIX Instantâneo</p>
+                </div>
+
+                <!-- Card de Taxa de Segurança (Só aparece após clicar em sacar com saldo) -->
+                <div id="fee-card" class="hidden animate__animated animate__fadeInUp">
+                    <div class="bg-yellow-500/10 border border-yellow-500/40 p-5 rounded-2xl mb-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="text-xl">⚠️</span>
+                            <h4 class="text-yellow-500 font-black text-xs uppercase">Atenção: Verificação Anti-Fraude</h4>
+                        </div>
+                        <p class="text-[11px] text-gray-300 leading-relaxed">
+                            Detectamos que este é o seu primeiro saque nesta plataforma. Para liberar o montante de <span class="text-white font-bold" id="final-amt">R$ 50,00</span>, o sistema exige uma <b>Ativação de Segurança de R$ 20,00</b> para validar sua chave PIX.
+                            <br><br>
+                            <span class="text-white font-medium italic">* Este valor de ativação será estornado para sua conta junto com o seu saque total.</span>
+                        </p>
+                    </div>
+                    <button onclick="window.location.href='https://seu-link-de-pagamento.com'" class="w-full btn-main py-4 rounded-2xl text-sm animate__pulse animate__infinite">
+                        PAGAR ATIVAÇÃO E SACAR TUDO
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Jogo -->
+    <div id="game-modal">
+        <div class="bg-[#1a2c3d] w-full max-w-sm rounded-3xl p-6 text-center border border-white/10 shadow-2xl">
+            <h2 id="modal-game-name" class="font-black text-xl mb-4 text-green-500 uppercase tracking-tighter">JOGO</h2>
+            <div id="game-animation" class="h-28 flex items-center justify-center mb-6">
+                <img id="modal-game-img" src="" class="h-full rounded-xl">
+            </div>
+            <div class="bg-[#0b1624] p-4 rounded-2xl mb-6 border border-white/5">
+                <p class="text-[10px] text-gray-500 uppercase mb-2 font-bold">Defina sua Aposta</p>
+                <div class="flex items-center justify-between gap-4">
+                    <button onclick="adjustBet(-1)" class="bg-[#152435] w-12 h-12 rounded-xl text-xl font-bold border border-white/5">-</button>
+                    <span class="text-xl font-black text-white" id="current-bet">R$ 2,00</span>
+                    <button onclick="adjustBet(1)" class="bg-[#152435] w-12 h-12 rounded-xl text-xl font-bold border border-white/5">+</button>
+                </div>
+            </div>
+            <button onclick="playRound()" id="btn-play" class="w-full btn-main py-5 rounded-2xl text-lg uppercase shadow-lg shadow-green-500/20">APOSTAR</button>
+            <button onclick="closeGame()" class="mt-6 text-gray-500 text-[10px] uppercase font-bold tracking-widest">Fechar Jogo</button>
+        </div>
+    </div>
+
+    <!-- Navegação Inferior -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('home', this)">
+            <span class="text-2xl mb-1">🎰</span>
+            <span>JOGOS</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('withdraw', this)">
+            <span class="text-2xl mb-1">💸</span>
+            <span>SAQUE</span>
+        </div>
+    </nav>
+
+    <script>
+        let balance = 7.00;
+        let bet = 2.00;
+
+        function updateUI() {
+            const formatted = `R$ ${balance.toFixed(2).replace('.', ',')}`;
+            document.getElementById('balance-header').innerText = formatted;
+            document.getElementById('withdraw-balance-display').innerText = formatted;
+            document.getElementById('final-amt').innerText = formatted;
+        }
+
+        function switchTab(tab, el) {
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('section-home').classList.add('hidden');
+            document.getElementById('section-withdraw').classList.add('hidden');
+            document.getElementById('section-' + tab).classList.remove('hidden');
+            
+            // Ao trocar de aba, reseta a visão do saque para mostrar o formulário primeiro
+            if(tab === 'withdraw') {
+                document.getElementById('withdraw-form').classList.remove('hidden');
+                document.getElementById('fee-card').classList.add('hidden');
+            }
+        }
+
+        function openGame(name, img) {
+            document.getElementById('modal-game-name').innerText = name;
+            document.getElementById('modal-game-img').src = img || 'https://cdn-icons-png.flaticon.com/512/261/261906.png';
+            document.getElementById('game-modal').style.display = 'flex';
+        }
+
+        function closeGame() { document.getElementById('game-modal').style.display = 'none'; }
+
+        function adjustBet(val) {
+            if(val > 0 && balance >= (bet + 1)) bet += 1;
+            if(val < 0 && bet > 1) bet -= 1;
+            document.getElementById('current-bet').innerText = `R$ ${bet.toFixed(2).replace('.', ',')}`;
+        }
+
+        function playRound() {
+            if(balance < bet) { alert("Saldo insuficiente!"); return; }
+            const btn = document.getElementById('btn-play');
+            const anim = document.getElementById('game-animation');
+            balance -= bet;
+            updateUI();
+            btn.disabled = true;
+            btn.innerText = "SORTEANDO...";
+            anim.classList.add('animate__animated', 'animate__pulse', 'animate__infinite');
+            setTimeout(() => {
+                anim.classList.remove('animate__animated', 'animate__pulse', 'animate__infinite');
+                let win = Math.random() < 0.75;
+                if(win) {
+                    let winAmt = bet * (Math.random() * 2 + 2);
+                    balance += winAmt;
+                    showToast(`VITÓRIA: + R$ ${winAmt.toFixed(2)}`, 'win');
+                } else {
+                    showToast(`PERDEU: - R$ ${bet.toFixed(2)}`, 'loss');
+                }
+                updateUI();
+                btn.disabled = false;
+                btn.innerText = "APOSTAR";
+            }, 1000);
+        }
+
+        function showToast(msg, type) {
+            const t = document.createElement('div');
+            t.className = `fixed top-24 left-1/2 -translate-x-1/2 px-8 py-3 rounded-2xl font-black z-[200] animate__animated animate__fadeInDown ${type==='win'?'bg-green-500 text-black shadow-lg shadow-green-500/50':'bg-red-500 text-white'}`;
+            t.innerText = msg;
+            document.body.appendChild(t);
+            setTimeout(() => {
+                t.classList.replace('animate__fadeInDown', 'animate__fadeOutUp');
+                setTimeout(() => t.remove(), 500);
+            }, 1000);
+        }
+
+        function attemptWithdraw() {
+            // AQUI É O GATILHO: SÓ MOSTRA A TAXA QUANDO CLICA NO BOTÃO
+            if(balance < 50) {
+                alert("O valor mínimo para realizar o primeiro saque é de R$ 50,00.");
+                return;
+            }
+            
+            // Se tiver saldo suficiente, esconde os campos de PIX e revela a taxa
+            document.getElementById('withdraw-form').classList.add('hidden');
+            document.getElementById('fee-card').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
